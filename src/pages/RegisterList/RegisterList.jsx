@@ -4,20 +4,25 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import ProductTable from './components/ProductTable';
 import OptionTable from './components/OptionTable';
-import Pagination from '../../components/Pagination';
 import Filter from './components/Filter';
 import { chunk } from '../../utils/sliceArr';
 import { lightTheme } from '../../styles/theme';
+import { Link, useParams } from 'react-router-dom';
+
+const PAGE_SIZE = 8;
 
 const RegisterList = () => {
+  const { page = 1 } = useParams();
+  const pageIndex = +page - 1;
+
   const [productData, setProductData] = useState([]);
+  const pageCount = Math.ceil(productData.length / PAGE_SIZE);
+  const pages = new Array(pageCount).fill(null);
 
-  const [pageNum, setPageNum] = useState(0);
-  let pageSliceArr = chunk(productData, 8);
-
+  let pageSliceArr = chunk(productData, PAGE_SIZE);
   let manufacturedData = [];
 
-  pageSliceArr[pageNum]?.forEach(obj => {
+  pageSliceArr[pageIndex]?.forEach(obj => {
     const updatedArr = [];
 
     updatedArr.push({ ...obj, type: 'product' });
@@ -32,8 +37,11 @@ const RegisterList = () => {
   });
 
   const getRequest = async () => {
-    const response = await axios('/data.json');
-    setProductData(response.data.products_list);
+    const {
+      data: { products_list },
+    } = await axios('/data.json');
+
+    setProductData(products_list);
   };
 
   useEffect(() => {
@@ -62,9 +70,14 @@ const RegisterList = () => {
           })}
         </tbody>
       </Table>
-      <PaginationBox>
-        <Pagination pageSliceArr={pageSliceArr} pageNum={pageNum} setPageNum={setPageNum} />
-      </PaginationBox>
+
+      <div>
+        {pages.map((_, idx) => (
+          <Link key={idx} to={`/register_list/${idx + 1}`}>
+            {idx + 1}
+          </Link>
+        ))}
+      </div>
     </Container>
   );
 };

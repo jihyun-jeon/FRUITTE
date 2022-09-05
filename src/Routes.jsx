@@ -22,7 +22,10 @@ const Router = () => {
         <Route path="/" element={<ProductList toggle={toggle} onToggle={onToggle} />} />
         <Route path="/order" element={<Order />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/register_list" element={<RegisterList />} />
+        <Route path="/register_list">
+          <Route index element={<RegisterList />} />
+          <Route path=":page" element={<RegisterList />} />
+        </Route>
         <Route path="/ordercontent" element={<OrderContent />} />
         <Route path="/fruitstore/:idx" element={<ProductDetail />} />
       </Routes>

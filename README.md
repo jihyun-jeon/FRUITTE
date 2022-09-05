@@ -5,6 +5,7 @@
 - http://wanted610.s3-website.ap-northeast-2.amazonaws.com/
 
 ### 일반 사용자로 이용하기
+
 ```
 id : test@test.com
 password : test123!
@@ -13,6 +14,7 @@ password : test123!
 <br>
 
 ### 관리자로 이용하기
+
 ```
 id : admin@admin.com
 password : admin123!
@@ -309,7 +311,6 @@ password : admin123!
 ### 홈으로 버튼 클릭 시
 
 - useNavigate를 활용해 '홈으로' 버튼 클릭 시 상품조회 페이지로 이동
-
 
 ### UI 관련
 
