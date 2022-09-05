@@ -7,7 +7,7 @@ import OptionTable from './components/OptionTable';
 import Filter from './components/Filter';
 import { chunk } from '../../utils/sliceArr';
 import { lightTheme } from '../../styles/theme';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 
 const PAGE_SIZE = 8;
 
@@ -16,10 +16,34 @@ const RegisterList = () => {
   const pageIndex = +page - 1;
 
   const [productData, setProductData] = useState([]);
-  const pageCount = Math.ceil(productData.length / PAGE_SIZE);
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const searchValue = queryParams.get('product'); // 유자
+  const displayStatus = queryParams.get('show');
+
+  let filterData = productData;
+
+  if (searchValue || displayStatus) {
+    filterData = productData.filter(({ title, isShow }) => {
+      if (searchValue && displayStatus) {
+        return title.includes(searchValue) && `${isShow}` === displayStatus;
+      }
+
+      if (searchValue) {
+        return title.includes(searchValue);
+      }
+
+      if (displayStatus) {
+        return `${isShow}` === displayStatus;
+      }
+    });
+  }
+
+  const pageCount = Math.ceil(filterData.length / PAGE_SIZE);
   const pages = new Array(pageCount).fill(null);
 
-  let pageSliceArr = chunk(productData, PAGE_SIZE);
+  let pageSliceArr = chunk(filterData, PAGE_SIZE);
   let manufacturedData = [];
 
   pageSliceArr[pageIndex]?.forEach(obj => {

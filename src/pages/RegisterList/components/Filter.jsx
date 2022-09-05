@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
+import { createSearchParams, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Button from '../../../components/Button';
 
 const Filter = ({ productData, setProductData, getRequest }) => {
+  const navigate = useNavigate();
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const urlValue = queryParams.get('search'); // 유자
   const [filterValue, setFilterValue] = useState({ product: '', show: '' });
 
   const onChange = e => {
@@ -10,26 +16,11 @@ const Filter = ({ productData, setProductData, getRequest }) => {
     setFilterValue(prev => ({ ...prev, [name]: value }));
   };
 
-  const TitleSearch = () => {
-    if (filterValue.product) {
-      const filterData = productData.filter(data => {
-        return data.title.includes(filterValue.product);
-      });
-      setProductData(filterData);
-    } else {
-      getRequest();
-    }
-  };
-
-  const ShowSearch = () => {
-    if (filterValue.show) {
-      const filterData = productData.filter(data => {
-        return `${data.isShow}` === filterValue.show;
-      });
-      setProductData(filterData);
-    } else {
-      getRequest();
-    }
+  const onClickSeach = () => {
+    navigate({
+      pathname: '/register_list',
+      search: `?${createSearchParams(filterValue)}`,
+    });
   };
 
   return (
@@ -42,13 +33,11 @@ const Filter = ({ productData, setProductData, getRequest }) => {
             id="productSearch"
             name="product"
             placeholder="상품명 검색"
+            defaultValue={urlValue}
             style={{ padding: '4px 0' }}
             onChange={e => onChange(e)}
           />
         </LabelEl>
-        <Button size="small" onClick={TitleSearch}>
-          검색
-        </Button>
       </div>
       <div>
         <LabelEl htmlFor="statusFilter">
@@ -63,7 +52,6 @@ const Filter = ({ productData, setProductData, getRequest }) => {
             })}
           </SelectBox>
         </LabelEl>
-        <Button size="small">검색</Button>
       </div>
       <div>
         <LabelEl htmlFor="show">
@@ -78,7 +66,7 @@ const Filter = ({ productData, setProductData, getRequest }) => {
             })}
           </SelectBox>
         </LabelEl>
-        <Button size="small" onClick={ShowSearch}>
+        <Button size="small" onClick={onClickSeach}>
           검색
         </Button>
       </div>
